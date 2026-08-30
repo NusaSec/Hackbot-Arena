@@ -9,12 +9,12 @@
 # audit_key -> _systemAudit(runtimeKey) returns the flag as
 # internalSecret.
 #
-# Usage: ./run.sh [base-url]     (default http://localhost:8084)
+# Usage: ./run.sh [base-url]     (default http://localhost:8085)
 # Prints the flag on stdout; exit 0 on success.
 # ============================================================
 set -euo pipefail
 
-BASE="${1:-http://localhost:8084}"
+BASE="${1:-http://localhost:8085}"
 FLAG_RE='FLAG{nusasec-[0-9a-f]{32}}'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

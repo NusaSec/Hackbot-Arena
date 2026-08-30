@@ -5,7 +5,7 @@ services:
     build: ./nginx
     container_name: cachekey-nginx
     ports:
-      - "8080:80"
+      - "8081:80"
     depends_on:
       - backend
     networks:

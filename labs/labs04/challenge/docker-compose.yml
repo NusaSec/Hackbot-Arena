@@ -5,7 +5,7 @@ services:
     build: .
     container_name: roleplay-app
     ports:
-      - "8083:80"
+      - "8084:80"
     depends_on:
       - db
     environment:

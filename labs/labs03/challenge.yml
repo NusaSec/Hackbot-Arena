@@ -3,7 +3,7 @@ name: JWTea
 lab: labs03
 category: web
 difficulty: medium
-port: 8082
+port: 8083
 stack: "Node/Express · custom JWT (RS256 + HS256) · SQLite · JWKS endpoint"
 vuln_class: JWT algorithm confusion (RS256 -> HS256 signed with the public key)
 summary: >-

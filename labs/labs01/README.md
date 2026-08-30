@@ -1,6 +1,6 @@
 # CacheKey — Web Cache Deception
 
-- **Lab:** labs01 · **Category:** web · **Difficulty:** medium · **Port:** [8080](http://localhost:8080)
+- **Lab:** labs01 · **Category:** web · **Difficulty:** medium · **Port:** [8081](http://localhost:8081)
 - **Stack:** Node/Express · SQLite · Nginx proxy cache · headless admin bot
 
 ## Vuln

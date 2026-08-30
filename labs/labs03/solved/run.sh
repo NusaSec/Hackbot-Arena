@@ -7,13 +7,13 @@
 # HMAC secret is that PEM and whose role claim is "admin" -> read
 # /api/admin/treasury/secrets. (CVE-2015-9235 family.)
 #
-# Usage: ./run.sh [base-url]     (default http://localhost:8082)
+# Usage: ./run.sh [base-url]     (default http://localhost:8083)
 # Prints the flag on stdout; exit 0 on success.
 # Requires: python3 (stdlib only)
 # ============================================================
 set -euo pipefail
 
-BASE="${1:-http://localhost:8082}"
+BASE="${1:-http://localhost:8083}"
 FLAG_RE='FLAG{nusasec-[0-9a-f]{32}}'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

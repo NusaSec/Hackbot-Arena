@@ -1,6 +1,6 @@
 # GraphLeak — GraphQL Introspection + Hidden Field Authorization Bypass
 
-- **Lab:** labs05 · **Category:** web · **Difficulty:** medium · **Port:** [8084](http://localhost:8084)
+- **Lab:** labs05 · **Category:** web · **Difficulty:** medium · **Port:** [8085](http://localhost:8085)
 - **Stack:** Node/Express · graphql (npm) · SQLite · session auth
 
 ## Vuln

@@ -3,7 +3,7 @@ name: VaultKey
 lab: labs02
 category: web
 difficulty: medium
-port: 8081
+port: 8082
 stack: "Node/Express · SQLite · WebSocket event bus · OpenAPI/Swagger"
 vuln_class: Hidden WebSocket channel leaking rotated service credentials
 summary: >-

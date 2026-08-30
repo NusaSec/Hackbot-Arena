@@ -13,12 +13,12 @@
 # Password provenance: 370fc3559c9f0bff80543f2e1151c537 (suhada)
 # == md5("xNnWo6272k7x"), present in rockyou.
 #
-# Usage: ./run.sh [base-url]     (default http://localhost:8083)
+# Usage: ./run.sh [base-url]     (default http://localhost:8084)
 # Prints the flag on stdout; exit 0 on success.
 # ============================================================
 set -euo pipefail
 
-BASE="${1:-http://localhost:8083}"
+BASE="${1:-http://localhost:8084}"
 FLAG_RE='FLAG{nusasec-[0-9a-f]{32}}'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

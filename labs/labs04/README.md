@@ -1,6 +1,6 @@
 # RolePlay — IDOR + Legacy MD5 Hashes
 
-- **Lab:** labs04 · **Category:** web · **Difficulty:** easy · **Port:** [8083](http://localhost:8083)
+- **Lab:** labs04 · **Category:** web · **Difficulty:** easy · **Port:** [8084](http://localhost:8084)
 - **Stack:** PHP 8.2/Apache · MySQL 8 · MD5 password hashes
 
 ## Vuln

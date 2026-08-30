@@ -1,6 +1,6 @@
 # VaultKey — Hidden WebSocket Channel Credential Leak
 
-- **Lab:** labs02 · **Category:** web · **Difficulty:** medium · **Port:** [8081](http://localhost:8081)
+- **Lab:** labs02 · **Category:** web · **Difficulty:** medium · **Port:** [8082](http://localhost:8082)
 - **Stack:** Node/Express · SQLite · WebSocket event bus · OpenAPI/Swagger
 
 ## Vuln

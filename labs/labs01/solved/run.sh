@@ -6,12 +6,12 @@
 # to the admin review queue -> admin bot's logged-in GET gets cached
 # by nginx under a cookie-free key -> re-fetch anonymously -> flag.
 #
-# Usage: ./run.sh [base-url]     (default http://localhost:8080)
+# Usage: ./run.sh [base-url]     (default http://localhost:8081)
 # Prints the flag on stdout; exit 0 on success.
 # ============================================================
 set -euo pipefail
 
-BASE="${1:-http://localhost:8080}"
+BASE="${1:-http://localhost:8081}"
 FLAG_RE='FLAG{nusasec-[0-9a-f]{32}}'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

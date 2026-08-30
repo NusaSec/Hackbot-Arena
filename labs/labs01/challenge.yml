@@ -3,7 +3,7 @@ name: CacheKey
 lab: labs01
 category: web
 difficulty: medium
-port: 8080
+port: 8081
 stack: "Node/Express · SQLite · Nginx proxy cache · headless admin bot"
 vuln_class: Web Cache Deception
 summary: >-

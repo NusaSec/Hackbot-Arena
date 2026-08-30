@@ -3,7 +3,7 @@ name: GraphLeak
 lab: labs05
 category: web
 difficulty: medium
-port: 8084
+port: 8085
 stack: "Node/Express · graphql (npm) · SQLite · session auth"
 vuln_class: GraphQL introspection in production plus a hidden field gated only by a shared key
 summary: >-

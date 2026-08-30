@@ -1,39 +1,19 @@
-<details>
-<summary>Hint 1 — orientasi</summary>
+# JWTea — solved
 
-Register akun, login, jelajahi dashboard. Lihat request flow di DevTools — bagaimana frontend authentikasi ke API? Apa yang disimpan di mana?
-</details>
+**Flag:** `FLAG{nusasec-21d41178f15cdf55f97189a36196f7bf}` · **Port:** 8083 · **Reference exploit:** `./run.sh`
 
-<details>
-<summary>Hint 2 — inspect token</summary>
+## Why this is vulnerable
 
-Setelah login, kamu dapat JWT token (lihat localStorage atau response /api/auth/login). Decode token di [jwt.io](https://jwt.io) atau pakai `base64 -d`. Apa algoritma yang dipakai di header? Apa claims di payload?
-</details>
+This is JWT algorithm confusion, the CVE-2015-9235 family. The backend uses a hand-written JWT verifier, and three of its choices line up badly.
 
-<details>
-<summary>Hint 3 — recon protocol</summary>
+First, the verifier takes the `alg` field from the token header — data the attacker fully controls — and dispatches to whatever verification path that field names. The algorithm is a protocol decision that must be pinned server-side; letting the token choose it means letting the attacker choose which math protects you.
 
-Server memakai algoritma asimetrik (RS256). Untuk verifikasi, server membutuhkan public key. Di mana public key biasanya di-publish untuk JWT-based API? Ada endpoint discovery standar.
-</details>
+Second, alongside RS256 the verifier keeps an HS256 "legacy mobile client" path, and its HMAC secret is the RSA **public** key PEM. This is the core confusion: RS256 is secure because signing requires the private key, but HS256 is symmetric — knowing the secret is enough to sign. Using the public key as the HMAC secret converts a key that is *meant* to be public into the signing capability itself.
 
-<details>
-<summary>Hint 4 — read the docs</summary>
+Third, the public key is published at `/.well-known/jwks.json` and the `/docs/api` page openly says HS256 is accepted. So the "secret" is handed to every caller. Anyone can rebuild the exact PEM from the JWK, sign `{"alg":"HS256"}` tokens with HMAC-SHA256 over that PEM, and the verifier accepts them as if they were legitimate.
 
-Buka `/docs/api` di browser. Perhatikan section Authentication — apa yang disebutkan tentang algoritma yang diterima server? Apa "kompatibilitas mobile pre-v1.4" yang dimention?
-</details>
+One more decision finishes the escalation: on verification, the token's `role` claim overrides the role stored in the database. A forged `role: "admin"` claim in the HS256 token is therefore enough to reach `GET /api/admin/treasury/secrets`, where `treasury_signature_key` is the flag. The subtlety that makes the exploit reliable is byte-exactness — the HMAC must be computed over the *same PEM bytes* the server reads from disk (same SPKI format, line wrapping, and trailing newline), not merely an equivalent key.
 
-<details>
-<summary>Hint 5 — the bug class</summary>
+## The right fix
 
-Bug class ini bernama "algorithm confusion" atau "JWT alg confusion attack". Ide-nya: jika server menerima HS256 (symmetric) dan RS256 (asymmetric) dari token header, dan keduanya sama-sama dependent pada key material yang sama, attacker yang bisa baca public key bisa forge token. Bagaimana?
-</details>
-
-<details>
-<summary>Hint 6 — payload</summary>
-
-1. Ambil RSA public key dari `/.well-known/jwks.json`. Format JWK perlu di-convert ke PEM.
-2. Buat JWT header `{"alg":"HS256","typ":"JWT"}`
-3. Buat payload dengan `sub` user_id admin (lihat seed data, atau brute force kecil) dan `role: "admin"`
-4. Sign dengan `HMAC-SHA256(public_key_pem_bytes, header_b64 + "." + payload_b64)`
-5. Kirim sebagai `Authorization: Bearer ...`
-</details>
+Never write JWT verification by hand: use a maintained library with an explicit, server-side `algorithms` whitelist (here: `["RS256"]` only). Never reuse asymmetric public keys as symmetric secrets — a "legacy compatibility" branch that shares key material between algorithms is exactly how this bug class is born. Delete the HS256 path. And treat the database, not the token, as the source of truth for authorization roles; a token should identify the user, not promote them.

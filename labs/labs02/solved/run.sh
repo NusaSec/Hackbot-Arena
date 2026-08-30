@@ -8,13 +8,13 @@
 # vault-keeper key (vk_svc_vault_*, rotates every 60s) -> call
 # GET /api/v1/flag with it.
 #
-# Usage: ./run.sh [base-url]     (default http://localhost:8081)
+# Usage: ./run.sh [base-url]     (default http://localhost:8082)
 # Prints the flag on stdout; exit 0 on success.
 # Requires: python3 (stdlib only — includes a minimal WebSocket client)
 # ============================================================
 set -euo pipefail
 
-BASE="${1:-http://localhost:8081}"
+BASE="${1:-http://localhost:8082}"
 FLAG_RE='FLAG{nusasec-[0-9a-f]{32}}'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
