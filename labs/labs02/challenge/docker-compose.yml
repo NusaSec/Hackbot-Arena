@@ -1,0 +1,34 @@
+name: vaultkey
+
+services:
+  nginx:
+    build: ./nginx
+    container_name: vaultkey-nginx
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - ctf-net
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: vaultkey-backend
+    environment:
+      SESSION_SECRET: "vaultkey-session-13472ed398243fe47333a0314386bea"
+      FLAG: "${FLAG:?set FLAG in challenge/.env}"
+      DB_PATH: "/data/vault.db"
+    volumes:
+      - vault-db:/data
+    networks:
+      - ctf-net
+    restart: unless-stopped
+
+networks:
+  ctf-net:
+    driver: bridge
+
+volumes:
+  vault-db:
+    driver: local

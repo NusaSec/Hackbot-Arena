@@ -1,0 +1,38 @@
+name: jwtea
+
+services:
+  nginx:
+    build: ./nginx
+    container_name: jwtea-nginx
+    ports:
+      - "8082:80"
+    depends_on:
+      - backend
+    networks:
+      - ctf-net
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: jwtea-backend
+    environment:
+      FLAG: "${FLAG:?set FLAG in challenge/.env}"
+      DB_PATH: "/data/tahuna.db"
+      JWT_KEY_DIR: "/keys"
+      NODE_ENV: "production"
+    volumes:
+      - tahuna-db:/data
+      - tahuna-keys:/keys
+    networks:
+      - ctf-net
+    restart: unless-stopped
+
+networks:
+  ctf-net:
+    driver: bridge
+
+volumes:
+  tahuna-db:
+    driver: local
+  tahuna-keys:
+    driver: local

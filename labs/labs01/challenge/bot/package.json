@@ -1,0 +1,9 @@
+{
+  "name": "cachekey-bot",
+  "version": "1.0.0",
+  "description": "Admin reviewer bot",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  }
+}

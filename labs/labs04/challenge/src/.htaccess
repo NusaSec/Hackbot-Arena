@@ -1,0 +1,9 @@
+RewriteEngine On
+
+RewriteRule ^$ index.php [L]
+RewriteRule ^register/?$ register.php [L]
+RewriteRule ^dashboard/?$ dashboard.php [L]
+RewriteRule ^profile/?$ profile.php [L]
+RewriteRule ^posts/?$ posts.php [L]
+RewriteRule ^admin/?$ admin.php [L]
+RewriteRule ^logout/?$ logout.php [L]

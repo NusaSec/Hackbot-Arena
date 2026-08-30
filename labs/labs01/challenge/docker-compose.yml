@@ -1,0 +1,52 @@
+name: cachekey
+
+services:
+  nginx:
+    build: ./nginx
+    container_name: cachekey-nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - ctf-net
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: cachekey-backend
+    environment:
+      SESSION_SECRET: "cachekey-session-2938a3d29fdfca4500af2c1b162eb597"
+      ADMIN_PASSWORD: "P@ssw0rd!Adm1n#K3y"
+      FLAG: "${FLAG:?set FLAG in challenge/.env}"
+      INTERNAL_TOKEN: "bot-internal-token-do-not-leak"
+      DB_PATH: "/data/ctf.db"
+    volumes:
+      - ctf-db:/data
+    networks:
+      - ctf-net
+    restart: unless-stopped
+
+  admin-bot:
+    build: ./bot
+    container_name: cachekey-bot
+    depends_on:
+      - nginx
+      - backend
+    environment:
+      TARGET_BASE: "http://nginx"
+      ADMIN_USER: "admin"
+      ADMIN_PASS: "P@ssw0rd!Adm1n#K3y"
+      QUEUE_POLL_URL: "http://backend:3000/internal/queue/next"
+      INTERNAL_TOKEN: "bot-internal-token-do-not-leak"
+    networks:
+      - ctf-net
+    restart: unless-stopped
+
+networks:
+  ctf-net:
+    driver: bridge
+
+volumes:
+  ctf-db:
+    driver: local

@@ -1,0 +1,31 @@
+name: roleplay
+
+services:
+  app:
+    build: .
+    container_name: roleplay-app
+    ports:
+      - "8083:80"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_NAME: roleplay
+      DB_USER: roleuser
+      DB_PASS: rolepass
+      FLAG: "${FLAG:?set FLAG in challenge/.env}"
+
+  db:
+    image: mysql:8.0
+    container_name: roleplay-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: roleplay
+      MYSQL_USER: roleuser
+      MYSQL_PASSWORD: rolepass
+    volumes:
+      - roleplay_mysql:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+volumes:
+  roleplay_mysql:
