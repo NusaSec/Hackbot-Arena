@@ -1,0 +1,18 @@
+name: notelock
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        FLAG: "${FLAG:?set FLAG in challenge/.env}"
+    container_name: notelock-app
+    ports:
+      - "8102:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+    restart: unless-stopped
