@@ -21,3 +21,4 @@ judge:
 solution:
   script: solved/run.sh
   writeup: solved/README.md
+source: original

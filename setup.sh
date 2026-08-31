@@ -8,8 +8,9 @@
 #   ./setup.sh reset [labsXX ...]  stop labs, DELETE VOLUMES, rebuild
 #   ./setup.sh status              list running lab containers
 #
-# reset deletes data volumes: labs01 stores the flag inside its SQLite
-# volume, so a volume wipe is required after changing any FLAG in .env.
+# reset deletes data volumes and rebuilds images. labs01 stores its flag
+# inside its SQLite volume, and labs06+ bake the flag into the image at
+# build time — either way a reset is required after changing any FLAG.
 # ============================================================
 set -euo pipefail
 
@@ -49,10 +50,16 @@ cmd="${1:-}"; shift || true
 case "$cmd" in
   up|down|reset) ;;
   status)
-    docker ps --filter "name=cachekey-" --filter "name=vaultkey-" \
-      --filter "name=jwtea-" --filter "name=roleplay-" \
-      --filter "name=graphleak-" \
-      --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+    require_compose
+    found=0
+    for lab_dir in $(resolve_labs); do
+      rows="$(compose "$lab_dir" ps --format 'table {{.Name}}\t{{.Status}}\t{{.Ports}}' 2>/dev/null | tail -n +2)"
+      if [[ -n "$rows" ]]; then
+        echo "$rows"
+        found=1
+      fi
+    done
+    (( found )) || echo "No lab containers running."
     exit 0 ;;
   *) usage ;;
 esac
