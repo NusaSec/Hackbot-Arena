@@ -125,15 +125,144 @@ def vendors():
 # combined expression is evaluated per record. Because the scope clause
 # is joined without wrapping parentheses, a condition containing a
 # top-level OR breaks out of the tenant filter (see solved/README.md).
+#
+# Conditions are evaluated by the minimal grammar below — comparisons
+# between fields, numbers and quoted strings joined by && / || — never
+# by evaluating the text as code.
 # ------------------------------------------------------------------
+FIELDS = ("id", "org", "name", "category", "status", "year_to_date_spend")
+
+class RqlError(Exception):
+    pass
+
+def _lex(src):
+    toks, i = [], 0
+    while i < len(src):
+        c = src[i]
+        if c.isspace():
+            i += 1
+            continue
+        for op in ("==", "!=", ">=", "<=", "&&", "||"):
+            if src.startswith(op, i):
+                toks.append(("op", op))
+                i += len(op)
+                break
+        else:
+            if c in "()<>" :
+                toks.append(("op", c))
+                i += 1
+            elif c == "'":
+                j = src.find("'", i + 1)
+                if j < 0:
+                    raise RqlError("unterminated string")
+                toks.append(("str", src[i + 1:j]))
+                i = j + 1
+            elif c.isdigit() or (c == "." and i + 1 < len(src) and src[i + 1].isdigit()):
+                j = i
+                while j < len(src) and (src[j].isdigit() or src[j] == "."):
+                    j += 1
+                text = src[i:j]
+                toks.append(("num", float(text) if "." in text else int(text)))
+                i = j
+            elif c.isalpha() or c == "_":
+                j = i
+                while j < len(src) and (src[j].isalnum() or src[j] == "_"):
+                    j += 1
+                toks.append(("id", src[i:j]))
+                i = j
+            else:
+                raise RqlError(f"unexpected character {c!r}")
+    return toks
+
+def _parse(toks):
+    pos = [0]
+
+    def peek():
+        return toks[pos[0]] if pos[0] < len(toks) else (None, None)
+
+    def take():
+        tok = peek()
+        pos[0] += 1
+        return tok
+
+    def operand():
+        kind, val = take()
+        if kind in ("str", "num", "id"):
+            return (kind, val)
+        raise RqlError("expected value")
+
+    def primary():
+        kind, val = peek()
+        if kind == "op" and val == "(":
+            take()
+            node = or_expr()
+            kind, val = take()
+            if (kind, val) != ("op", ")"):
+                raise RqlError("expected )")
+            return node
+        left = operand()
+        kind, val = take()
+        if kind != "op" or val not in ("==", "!=", ">=", "<=", ">", "<"):
+            raise RqlError("expected comparison operator")
+        right = operand()
+        return ("cmp", val, left, right)
+
+    def and_expr():
+        node = primary()
+        while peek() == ("op", "&&"):
+            take()
+            node = ("and", node, primary())
+        return node
+
+    def or_expr():
+        node = and_expr()
+        while peek() == ("op", "||"):
+            take()
+            node = ("or", node, and_expr())
+        return node
+
+    node = or_expr()
+    if pos[0] != len(toks):
+        raise RqlError("trailing tokens")
+    return node
+
+def _resolve(term, record):
+    kind, val = term
+    if kind == "id":
+        if val not in FIELDS:
+            raise RqlError(f"unknown field {val!r}")
+        return record[val]
+    return val
+
+def _eval(node, record):
+    tag = node[0]
+    if tag == "or":
+        return _eval(node[1], record) or _eval(node[2], record)
+    if tag == "and":
+        return _eval(node[1], record) and _eval(node[2], record)
+    _, op, left, right = node
+    a, b = _resolve(left, record), _resolve(right, record)
+    try:
+        if op == "==":
+            return a == b
+        if op == "!=":
+            return a != b
+        if op == ">":
+            return a > b
+        if op == "<":
+            return a < b
+        if op == ">=":
+            return a >= b
+        return a <= b
+    except TypeError:
+        return False
+
 def eval_rql(rql: str, user: dict, record: dict):
     combined = f"org == '{user['org']}' && {rql}"
-    py = combined.replace("&&", " and ").replace("||", " or ")
-    env = {"__builtins__": {}}
-    env.update({k: record[k] for k in ("id", "org", "name", "category", "status", "year_to_date_spend")})
     try:
-        return bool(eval(py, env))
-    except Exception:
+        ast = _parse(_lex(combined))
+        return bool(_eval(ast, record))
+    except RqlError:
         return None
 
 @app.post("/api/vendors/find_paginated")

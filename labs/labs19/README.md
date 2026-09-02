@@ -9,7 +9,7 @@
 A three-step cross-tenant chain:
 
 1. **Self-registration** joins Acme Corp as the lowest-privilege employee; every legitimate listing is properly scoped to your company.
-2. **RQL scope bypass:** the paginated vendor search (`find_paginated`) prepends the tenant scope to your `rql_condition` *without wrapping parentheses*. A condition containing a top-level OR — `(id == 'zzz') || (1==1)` — makes the combined expression `(scope AND your_filter) OR true`, so the search lists vendors from **every tenant**, including Globex.
+2. **RQL scope bypass:** the paginated vendor search (`find_paginated`) prepends the tenant scope to your `rql_condition` *without wrapping parentheses*. A condition containing a top-level OR — `(id == 'zzz') || (1==1)` — makes the combined expression `(scope AND your_filter) OR true`, so the search lists vendors from **every tenant**, including Globex. Conditions are parsed by a minimal comparison grammar (`==`, `!=`, `<`, `>`, `<=`, `>=` over fields, numbers and quoted strings, joined by `&&`/`||`) — not evaluated as code, so the bug to hunt is the scoping itself.
 3. **Vendor BOLA:** `get_most_recently_approved_bill_payment_for_vendor?vendorId=<id>` returns the full payment object — including `vendorBankAccountObj` — for any vendor, with **no tenant check**. The flag is the target vendor's `plaintext_routing_number`.
 
 ## Flag

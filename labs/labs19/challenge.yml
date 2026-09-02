@@ -10,9 +10,10 @@ summary: >-
   A multi-company spend platform seeded with Acme Corp and Globex Inc.
   Self-registration lands in Acme as a low-privilege employee. The paginated
   vendor search prepends the tenant scope to the user-supplied RQL condition
-  without wrapping parentheses, so a top-level OR breaks tenant scoping and
-  lists foreign vendors; the bill-payment endpoint then returns full vendor
-  bank objects for any vendorId with no tenant check.
+  (a minimal comparison grammar, never evaluated as code) without wrapping
+  parentheses, so a top-level OR breaks tenant scoping and lists foreign
+  vendors; the bill-payment endpoint then returns full vendor bank objects
+  for any vendorId with no tenant check.
 flag_format: "FLAG{nusasec-<32 hex>}"
 flag: "FLAG{nusasec-24b92318392cd7c0c0ecf653f52a7c36}"
 flag_location: plaintext_routing_number of the cross-tenant vendor payment object
