@@ -162,7 +162,12 @@ def _lex(src):
                 while j < len(src) and (src[j].isdigit() or src[j] == "."):
                     j += 1
                 text = src[i:j]
-                toks.append(("num", float(text) if "." in text else int(text)))
+                if text.count(".") > 1:
+                    raise RqlError("malformed number")
+                try:
+                    toks.append(("num", float(text) if "." in text else int(text)))
+                except ValueError:
+                    raise RqlError("malformed number")
                 i = j
             elif c.isalpha() or c == "_":
                 j = i
@@ -174,8 +179,12 @@ def _lex(src):
                 raise RqlError(f"unexpected character {c!r}")
     return toks
 
+MAX_RQL_LEN = 256
+MAX_RQL_DEPTH = 32
+
 def _parse(toks):
     pos = [0]
+    depth = [0]
 
     def peek():
         return toks[pos[0]] if pos[0] < len(toks) else (None, None)
@@ -194,9 +203,13 @@ def _parse(toks):
     def primary():
         kind, val = peek()
         if kind == "op" and val == "(":
+            depth[0] += 1
+            if depth[0] > MAX_RQL_DEPTH:
+                raise RqlError("expression nests too deeply")
             take()
             node = or_expr()
             kind, val = take()
+            depth[0] -= 1
             if (kind, val) != ("op", ")"):
                 raise RqlError("expected )")
             return node
@@ -262,7 +275,7 @@ def eval_rql(rql: str, user: dict, record: dict):
     try:
         ast = _parse(_lex(combined))
         return bool(_eval(ast, record))
-    except RqlError:
+    except (RqlError, ValueError, RecursionError):
         return None
 
 @app.post("/api/vendors/find_paginated")
@@ -274,6 +287,8 @@ def find_paginated():
     rql = (d.get("rql_condition") or "").strip()
     if not rql:
         return jsonify({"error": "rql_condition required"}), 400
+    if len(rql) > MAX_RQL_LEN:
+        return jsonify({"error": "rql_condition too long"}), 400
     items = []
     for v in VENDORS:
         ok = eval_rql(rql, u, v)
