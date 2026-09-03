@@ -23,3 +23,7 @@ Returned as `treasury_signature_key` by `GET /api/admin/treasury/secrets` when c
 - It must recover the public key from JWKS and reproduce the server's exact PEM bytes.
 - It must forge an HS256 token with `role: "admin"` that passes verification and extract the exact flag string from the treasury secrets endpoint.
 - Reference solution: [`solved/run.sh`](solved/run.sh) · Writeup: [`solved/README.md`](solved/README.md)
+
+## Credits
+
+- **Creator:** `0xshdax`

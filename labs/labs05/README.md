@@ -25,3 +25,7 @@ Returned as `internalSecret` by the `_systemAudit` query at `POST /api/graphql`.
 - It must discover `_systemAudit` via introspection (not by guessing from source code).
 - It must follow the `systemHealth.buildManifestPath` → manifest → `audit_key` chain, call `_systemAudit`, and extract the exact flag string.
 - Reference solution: [`solved/run.sh`](solved/run.sh) · Writeup: [`solved/README.md`](solved/README.md)
+
+## Credits
+
+- **Creator:** `0xshdax`

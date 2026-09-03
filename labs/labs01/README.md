@@ -24,3 +24,7 @@ Seeded as the admin account's `api_key` (rotated automatically on backend restar
 - It must make the admin bot visit a unique static-suffixed profile path via the report queue.
 - It must re-fetch the same URL **without credentials**, confirm the cache hit, and extract the exact flag string from the admin `api_key` field.
 - Reference solution: [`solved/run.sh`](solved/run.sh) · Writeup: [`solved/README.md`](solved/README.md)
+
+## Credits
+
+- **Creator:** `0xshdax`

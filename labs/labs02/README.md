@@ -23,3 +23,7 @@ Returned in the JSON body of `GET /api/v1/flag` when called with an active vault
 - It must discover and subscribe to the unadvertised `system.audit` channel on `/ws/system`.
 - It must use a captured vault-keeper key *while it is still active* to read `/api/v1/flag` and extract the exact flag string.
 - Reference solution: [`solved/run.sh`](solved/run.sh) · Writeup: [`solved/README.md`](solved/README.md)
+
+## Credits
+
+- **Creator:** `0xshdax`
