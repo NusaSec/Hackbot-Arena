@@ -81,5 +81,4 @@ labs/labsXX/
 ## Credits
 
 - **labs06–labs18 are ported from [stealthbench](https://github.com/GangGreenTemperTatum/stealthbench)** — an evaluation suite of operationally realistic security tasks. The challenge apps are used as-is; flags, ports, and arena metadata were adapted to this repo's conventions. Each lab's `challenge.yml` records its `source` task.
-- **labs19–labs24 are built from the author's own bug-bounty and penetration-test findings**, reproduced here with fictional companies (each `challenge.yml` records the finding reference). Unpublished report details are intentionally not included.
-- labs01–05 are original scenarios; some patterns were inspired by stealthbench, and some findings originate from bug bounties or valid penetration-test engagements.
+- **Everything else is the author's own work.** labs01–05 are original scenarios, and labs19–24 are built from the author's private bug-bounty and penetration-test findings, reproduced with fictional companies (each `challenge.yml` records the finding reference; unpublished report details are intentionally excluded).
