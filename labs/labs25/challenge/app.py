@@ -317,6 +317,21 @@ class ChallengeAPI(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(raw)
 
+    def _method_not_allowed(self, allowed):
+        self._json(
+            405,
+            {
+                "data": None,
+                "error_list": [
+                    {
+                        "code": "method_not_allowed",
+                        "message": "This endpoint exists but does not accept this method",
+                    }
+                ],
+            },
+            {"Allow": allowed},
+        )
+
     def _read_json(self):
         length = int(self.headers.get("Content-Length", "0") or 0)
         if length == 0:
@@ -391,28 +406,8 @@ class ChallengeAPI(BaseHTTPRequestHandler):
             )
             return
 
-        if path == "/.well-known/booker-client.json":
-            self._json(
-                200,
-                {
-                    "app": "Booker Tools",
-                    "environment": "demo",
-                    "public_api": {
-                        "status": "/api/status",
-                        "properties": "/api/properties",
-                    },
-                    "user_api": {
-                        "register": "/api/user/register",
-                        "login": "/api/user/login",
-                        "me": "/api/user/me",
-                    },
-                    "partner_portal": {
-                        "base": "/adminapi",
-                        "registration": "/company/register",
-                        "activation_template": "/company/register/{company_id}/{activation_token}",
-                    },
-                },
-            )
+        if path in ("/api/user/register", "/api/user/login", "/adminapi/company/register"):
+            self._method_not_allowed("POST, OPTIONS")
             return
 
         if path == "/api/status":
@@ -666,9 +661,9 @@ class ChallengeAPI(BaseHTTPRequestHandler):
   <header>
     <div class="brand"><span class="mark">b</span> Booker Tools</div>
     <nav>
-      <a href="/api/status">Status</a>
-      <a href="/api/properties">Properties API</a>
-      <a href="/api/user/me">Account</a>
+      <a href="#properties">Stays</a>
+      <a href="#operators">Operators</a>
+      <a href="#signin">Sign in</a>
     </nav>
   </header>
   <main>
@@ -677,8 +672,8 @@ class ChallengeAPI(BaseHTTPRequestHandler):
         <h1>Bookings, guests, and payouts in one workspace.</h1>
         <p class="lead">Booker Tools helps small hospitality teams keep public listings, guest stays, owner records, and payment operations in sync across channels.</p>
         <div class="actions">
-          <a class="button primary" href="/api/properties">Browse properties</a>
-          <a class="button" href="/api/status">Check API status</a>
+          <a class="button primary" href="#properties">Browse stays</a>
+          <a class="button" href="#operators">For operators</a>
         </div>
         <div class="metrics">
           <div class="metric"><strong>3</strong><span>demo regions</span></div>
@@ -687,7 +682,7 @@ class ChallengeAPI(BaseHTTPRequestHandler):
         </div>
       </div>
       <div class="search">
-        <h2>Property availability</h2>
+        <h2 id="properties">Property availability</h2>
         <div class="controls">
           <input id="city" autocomplete="off" placeholder="City, e.g. Jakarta">
           <button id="search">Search</button>
@@ -697,7 +692,7 @@ class ChallengeAPI(BaseHTTPRequestHandler):
     </section>
   </main>
   <footer>
-    Partner integrations use the same API gateway as the public app. Client bootstrap metadata is published for web deployments.
+    Demo inventory is refreshed periodically for booking partners.
   </footer>
   <script src="/assets/app.js"></script>
 </body>
@@ -705,8 +700,7 @@ class ChallengeAPI(BaseHTTPRequestHandler):
 """
 
     def _client_script(self):
-        return """const clientConfigUrl = "/.well-known/booker-client.json";
-const results = document.querySelector("#results");
+        return """const results = document.querySelector("#results");
 const cityInput = document.querySelector("#city");
 const searchButton = document.querySelector("#search");
 
@@ -733,7 +727,6 @@ async function loadProperties() {
   }
 }
 
-// The partner SPA loads additional paths from clientConfigUrl during onboarding.
 loadProperties();
 searchButton.addEventListener("click", loadProperties);
 cityInput.addEventListener("keydown", (event) => {
