@@ -338,6 +338,16 @@ class ChallengeAPI(BaseHTTPRequestHandler):
             extra_headers=extra_headers,
         )
 
+    def _method_not_allowed(self, allowed):
+        self._json(
+            405,
+            {
+                "detail": "This endpoint exists but does not accept this method",
+                "error": "method_not_allowed",
+            },
+            {"Allow": allowed},
+        )
+
     def _ndjson(self, status, events):
         body = "".join(json.dumps(event, separators=(",", ":")) + "\n" for event in events)
         self._send(status, body, content_type="application/x-ndjson")
@@ -386,21 +396,25 @@ class ChallengeAPI(BaseHTTPRequestHandler):
         path = parsed.path.rstrip("/") or "/"
 
         if path == "/":
-            self._json(
+            self._send(200, self._landing_page(), content_type="text/html; charset=utf-8")
+            return
+
+        if path == "/assets/workbench.js":
+            self._send(
                 200,
-                {
-                    "service": "NusaAsk AI Analytics CTF",
-                    "hint": "The browser app loads /static/config.js before calling /python-api.",
-                    "routes": [
-                        "/static/config.js",
-                        "/python-api/openapi.json",
-                        "/python-api/docs",
-                        "/python-api/userBasedssoAuthentication",
-                        "/python-api/getNusaAccessibleDatatsets",
-                        "/python-api/streamNusaResponse",
-                    ],
-                },
+                self._workbench_script(),
+                content_type="application/javascript; charset=utf-8",
             )
+            return
+
+        if path in (
+            "/python-api/userBasedssoAuthentication",
+            "/python-api/getNusaAccessibleDatatsets",
+            "/python-api/getNusaAccessibleDatasets",
+            "/python-api/streamNusaResponse",
+            "/python-api/streamAliceCDOResponse",
+        ):
+            self._method_not_allowed("POST, OPTIONS")
             return
 
         if path == "/static/config.js":
@@ -441,6 +455,285 @@ class ChallengeAPI(BaseHTTPRequestHandler):
             return
 
         self._json(404, {"detail": "not found"})
+
+    def _landing_page(self):
+        return """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NusaAsk</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f9;
+      --panel: #ffffff;
+      --ink: #16202f;
+      --muted: #667084;
+      --line: #dce3ec;
+      --green: #0e8f68;
+      --blue: #2563eb;
+      --amber: #c27803;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    header {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 0 clamp(18px, 5vw, 72px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 760;
+    }
+    .mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--green);
+      font-weight: 900;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    nav a { color: inherit; text-decoration: none; }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 38px clamp(18px, 5vw, 36px) 54px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .intro {
+      padding: 16px 0 0;
+    }
+    h1 {
+      margin: 0 0 16px;
+      max-width: 720px;
+      font-size: clamp(36px, 5.6vw, 62px);
+      line-height: 1.03;
+      letter-spacing: 0;
+    }
+    .lead {
+      max-width: 640px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.68;
+      margin: 0 0 24px;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #fff;
+      color: #3d4859;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .workspace {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 18px 42px rgba(31, 42, 68, 0.10);
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfe;
+    }
+    .toolbar strong { font-size: 14px; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+    .thread {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+    .bubble {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+      color: #334155;
+      line-height: 1.55;
+    }
+    .bubble.ask {
+      background: #eff6ff;
+      border-color: #c7dbff;
+    }
+    .preview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 12px;
+    }
+    .metric strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .prompt {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 16px;
+      border-top: 1px solid var(--line);
+      background: #fbfcfe;
+    }
+    input, button {
+      min-height: 42px;
+      border-radius: 7px;
+      border: 1px solid var(--line);
+      font: inherit;
+    }
+    input {
+      padding: 0 12px;
+      background: #fff;
+      color: var(--ink);
+    }
+    button {
+      padding: 0 15px;
+      background: var(--ink);
+      color: #fff;
+      cursor: pointer;
+    }
+    footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 clamp(18px, 5vw, 36px) 28px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    @media (max-width: 820px) {
+      header { align-items: flex-start; flex-direction: column; height: auto; padding-top: 18px; padding-bottom: 18px; }
+      nav { flex-wrap: wrap; }
+      .layout { grid-template-columns: 1fr; }
+      .preview, .prompt { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="mark">N</span> NusaAsk</div>
+    <nav>
+      <a href="#workspace">Workspace</a>
+      <a href="#reports">Reports</a>
+      <a href="#signin">Sign in</a>
+    </nav>
+  </header>
+  <main>
+    <section class="layout">
+      <div class="intro">
+        <h1>Ask finance questions without waiting on another report.</h1>
+        <p class="lead">NusaAsk turns analyst questions into governed previews for invoices, vendors, and board-ready operating metrics.</p>
+        <div class="chips">
+          <span class="chip">Invoice spend</span>
+          <span class="chip">Supplier scorecards</span>
+          <span class="chip">Export review</span>
+        </div>
+      </div>
+      <div id="workspace" class="workspace">
+        <div class="toolbar">
+          <strong>Finance assistant</strong>
+          <span class="status"><span class="dot"></span>Demo workspace</span>
+        </div>
+        <div class="thread">
+          <div class="bubble ask">Show top suppliers by paid invoice amount this quarter.</div>
+          <div class="bubble">Preview ready. Full export requires an authenticated workspace session.</div>
+          <div class="preview">
+            <div class="metric"><strong>$29.1k</strong><span>Network Build</span></div>
+            <div class="metric"><strong>$18.3k</strong><span>Consumer West</span></div>
+            <div class="metric"><strong>$7.4k</strong><span>Platform</span></div>
+          </div>
+        </div>
+        <div class="prompt">
+          <input id="question" placeholder="Ask a finance question">
+          <button id="ask">Ask</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    Workspace access is managed by company SSO. Public demo content is intentionally limited.
+  </footer>
+  <script src="/assets/workbench.js"></script>
+</body>
+</html>
+"""
+
+    def _workbench_script(self):
+        return """const question = document.querySelector("#question");
+const ask = document.querySelector("#ask");
+
+ask.addEventListener("click", () => {
+  const value = question.value.trim();
+  if (!value) {
+    question.focus();
+    return;
+  }
+  ask.textContent = "Sign in required";
+  ask.disabled = true;
+  setTimeout(() => {
+    ask.textContent = "Ask";
+    ask.disabled = false;
+  }, 1400);
+});
+"""
 
     def do_POST(self):
         parsed = urlparse(self.path)
