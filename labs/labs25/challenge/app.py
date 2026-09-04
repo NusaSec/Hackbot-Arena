@@ -308,6 +308,15 @@ class ChallengeAPI(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(raw)
 
+    def _send_text(self, status, body, content_type):
+        raw = body.encode()
+        self.send_response(status)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(raw)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(raw)
+
     def _read_json(self):
         length = int(self.headers.get("Content-Length", "0") or 0)
         if length == 0:
@@ -371,21 +380,36 @@ class ChallengeAPI(BaseHTTPRequestHandler):
         query = parse_qs(parsed.query)
 
         if path == "/":
+            self._send_text(200, self._landing_page(), "text/html; charset=utf-8")
+            return
+
+        if path == "/assets/app.js":
+            self._send_text(
+                200,
+                self._client_script(),
+                "application/javascript; charset=utf-8",
+            )
+            return
+
+        if path == "/.well-known/booker-client.json":
             self._json(
                 200,
                 {
-                    "service": "Booker Tools CTF API",
-                    "routes": {
-                        "public": ["/api/status", "/api/properties"],
-                        "user": ["/api/user/register", "/api/user/login", "/api/user/me"],
-                        "admin": [
-                            "/adminapi/company/register",
-                            "/adminapi/company/register/<company_id>/<activation_token>",
-                            "/adminapi/guest-list",
-                            "/adminapi/transaction",
-                            "/adminapi/owner/paginate-list",
-                            "/adminapi/owner/list",
-                        ],
+                    "app": "Booker Tools",
+                    "environment": "demo",
+                    "public_api": {
+                        "status": "/api/status",
+                        "properties": "/api/properties",
+                    },
+                    "user_api": {
+                        "register": "/api/user/register",
+                        "login": "/api/user/login",
+                        "me": "/api/user/me",
+                    },
+                    "partner_portal": {
+                        "base": "/adminapi",
+                        "registration": "/company/register",
+                        "activation_template": "/company/register/{company_id}/{activation_token}",
                     },
                 },
             )
@@ -450,6 +474,272 @@ class ChallengeAPI(BaseHTTPRequestHandler):
             404,
             {"data": None, "error_list": [{"code": "not_found", "message": "Unknown route"}]},
         )
+
+    def _landing_page(self):
+        return """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Booker Tools</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #687386;
+      --line: #dfe5ee;
+      --brand: #fb5d3d;
+      --accent: #1677ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 22px clamp(18px, 5vw, 72px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 760;
+      font-size: 20px;
+    }
+    .mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: var(--brand);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+    nav {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    nav a { color: inherit; text-decoration: none; }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 56px clamp(18px, 5vw, 36px) 72px;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+      gap: 42px;
+      align-items: center;
+    }
+    h1 {
+      margin: 0 0 18px;
+      font-size: clamp(38px, 6vw, 68px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+    .lead {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+      max-width: 680px;
+      margin: 0 0 28px;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 650;
+    }
+    .button.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+    .search {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 18px;
+      box-shadow: 0 14px 38px rgba(27, 39, 66, 0.08);
+    }
+    .search h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+    input, button {
+      min-height: 42px;
+      border-radius: 7px;
+      border: 1px solid var(--line);
+      font: inherit;
+    }
+    input { padding: 0 12px; }
+    button {
+      padding: 0 14px;
+      background: var(--text);
+      color: #fff;
+      cursor: pointer;
+    }
+    .results {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+    }
+    .property {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcff;
+    }
+    .property strong { color: var(--text); }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 34px;
+    }
+    .metric {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .metric strong { display: block; font-size: 22px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    footer {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 clamp(18px, 5vw, 36px) 28px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    code {
+      background: #eef2f8;
+      border-radius: 5px;
+      padding: 2px 5px;
+    }
+    @media (max-width: 780px) {
+      header { align-items: flex-start; flex-direction: column; }
+      nav { flex-wrap: wrap; }
+      .hero { grid-template-columns: 1fr; }
+      .controls, .metrics { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="mark">b</span> Booker Tools</div>
+    <nav>
+      <a href="/api/status">Status</a>
+      <a href="/api/properties">Properties API</a>
+      <a href="/api/user/me">Account</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div>
+        <h1>Bookings, guests, and payouts in one workspace.</h1>
+        <p class="lead">Booker Tools helps small hospitality teams keep public listings, guest stays, owner records, and payment operations in sync across channels.</p>
+        <div class="actions">
+          <a class="button primary" href="/api/properties">Browse properties</a>
+          <a class="button" href="/api/status">Check API status</a>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong>3</strong><span>demo regions</span></div>
+          <div class="metric"><strong>24/7</strong><span>booking API</span></div>
+          <div class="metric"><strong>v1</strong><span>client portal</span></div>
+        </div>
+      </div>
+      <div class="search">
+        <h2>Property availability</h2>
+        <div class="controls">
+          <input id="city" autocomplete="off" placeholder="City, e.g. Jakarta">
+          <button id="search">Search</button>
+        </div>
+        <div id="results" class="results">Loading public properties...</div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    Partner integrations use the same API gateway as the public app. Client bootstrap metadata is published for web deployments.
+  </footer>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
+"""
+
+    def _client_script(self):
+        return """const clientConfigUrl = "/.well-known/booker-client.json";
+const results = document.querySelector("#results");
+const cityInput = document.querySelector("#city");
+const searchButton = document.querySelector("#search");
+
+async function apiGet(path) {
+  const response = await fetch(path, { headers: { "Accept": "application/json" } });
+  if (!response.ok) throw new Error(`API returned ${response.status}`);
+  return response.json();
+}
+
+async function loadProperties() {
+  const city = cityInput.value.trim();
+  const params = city ? `?city=${encodeURIComponent(city)}` : "";
+  results.textContent = "Loading...";
+  try {
+    const payload = await apiGet(`/api/properties${params}`);
+    results.innerHTML = payload.data.map((property) => `
+      <div class="property">
+        <div><strong>${property.name}</strong><br>${property.city}</div>
+        <div>${property.currency} ${property.from_price}</div>
+      </div>
+    `).join("") || "No public properties found.";
+  } catch (error) {
+    results.textContent = error.message;
+  }
+}
+
+// The partner SPA loads additional paths from clientConfigUrl during onboarding.
+loadProperties();
+searchButton.addEventListener("click", loadProperties);
+cityInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") loadProperties();
+});
+"""
 
     def do_POST(self):
         parsed = urlparse(self.path)
