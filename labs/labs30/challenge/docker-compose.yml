@@ -1,0 +1,45 @@
+name: labelkeysqli
+
+services:
+  postgres:
+    image: postgres:16-bookworm
+    container_name: labelkeysqli-postgres
+    environment:
+      POSTGRES_DB: labelkeysqli
+      POSTGRES_USER: labelkeysqli
+      POSTGRES_HOST_AUTH_METHOD: trust
+      FLAG: "${FLAG:?set FLAG in challenge/.env}"
+    volumes:
+      - labelkeysqli-pgdata:/var/lib/postgresql/data
+      - ./db/init.sh:/docker-entrypoint-initdb.d/10-init.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U labelkeysqli -d labelkeysqli"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 8s
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+    container_name: labelkeysqli-app
+    environment:
+      PORT: "5000"
+      DATABASE_URL: "postgres://labelkeysqli:labelkeysqli@postgres:5432/labelkeysqli"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8110:5000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 8s
+    restart: unless-stopped
+
+volumes:
+  labelkeysqli-pgdata:
+    driver: local
