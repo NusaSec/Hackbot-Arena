@@ -5,7 +5,7 @@
 <h1 align="center">⚔️ Hackbot Arena</h1>
 
 <p align="center">
-  <strong>Put your AI hackbot to the test.</strong><br>
+  <strong>Benchmark your AI agent against realistic web security challenges.</strong><br>
   Realistic web vulnerability chains. Local Docker labs. Reproducible flags.
 </p>
 
@@ -20,7 +20,7 @@
   <a href="#quick-start">Quick Start</a> ·
   <a href="#lab-index">Lab Index</a> ·
   <a href="#canonical-flags">Canonical Flags</a> ·
-  <a href="#evaluate-your-hackbot">Evaluation</a> ·
+  <a href="#benchmark-your-ai-agent">Benchmarking</a> ·
   <a href="#layout">Layout</a> ·
   <a href="#credits">Credits</a> ·
   <a href="#citation">Citation</a>
@@ -28,7 +28,7 @@
 
 ---
 
-Hackbot Arena is a local testing environment for AI hackbots. Each lab is a self-contained, dockerized web app with a realistic vulnerability chain and a canonical flag to check the result against. Labs run over plain HTTP on localhost, with no VPN or extra services required.
+Hackbot Arena is a local benchmarking environment for AI agents and hackbots. Each lab is a self-contained, dockerized web app with a realistic vulnerability chain and a canonical flag to check the result against. Use the arena to benchmark your AI agent's ability to find an entry point, complete the exploit chain, and recover the flag. Labs run over plain HTTP on localhost, with no VPN or extra services required.
 
 ## What is in the arena?
 
@@ -53,7 +53,7 @@ cd Hackbot-Arena
 ./setup.sh status
 ```
 
-Open **[http://localhost:8081](http://localhost:8081)**, then point your hackbot at that base URL. Choose another target from the [Lab Index](#lab-index).
+Open **[http://localhost:8081](http://localhost:8081)**, then point your AI agent at that base URL. Choose another target from the [Lab Index](#lab-index).
 
 Stop the lab when finished:
 
@@ -61,7 +61,9 @@ Stop the lab when finished:
 ./setup.sh down labs01
 ```
 
-## Evaluate your hackbot
+<a id="evaluate-your-hackbot"></a>
+
+## Benchmark your AI agent
 
 1. **Start a target.** Run `./setup.sh up labsXX` and use its localhost URL from the index.
 2. **Prepare the agent brief.** Provide the target URL, vulnerability class, and flag format. Use the lab README to prepare this brief; it also contains the answer and solution details, so do not pass it through verbatim. Keep canonical flags, `challenge.yml`, app source, and `solved/` outside the agent's context.
@@ -204,7 +206,7 @@ If you use Hackbot Arena in your research or evaluations, please cite this repos
 
 ```bibtex
 @misc{nusasec2026hackbotarena,
-  title        = {Hackbot Arena: A Local Testing Environment for AI Hackbots},
+  title        = {Hackbot Arena: A Local Benchmarking Environment for AI Agents},
   author       = {{riodrwn} and {0xshdax} and {type5afe}},
   year         = {2026},
   howpublished = {GitHub repository},
