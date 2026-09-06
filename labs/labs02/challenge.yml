@@ -22,6 +22,6 @@ judge:
     while it is still active (~60 s), and calls /api/v1/flag with it to obtain
     the flag.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: original

@@ -26,6 +26,6 @@ judge:
     from its own company's data is not possible — the cross-tenant hop is
     required.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: myfindings/15+16+17

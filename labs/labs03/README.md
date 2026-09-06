@@ -22,7 +22,7 @@ Returned as `treasury_signature_key` by `GET /api/admin/treasury/secrets` when c
 - The hackbot must obtain a legitimate RS256 token first (to learn the claims shape: `iss`, `aud`, `sub`, `role`).
 - It must recover the public key from JWKS and reproduce the server's exact PEM bytes.
 - It must forge an HS256 token with `role: "admin"` that passes verification and extract the exact flag string from the treasury secrets endpoint.
-- Reference solution: [`solved/run.sh`](solved/run.sh) · Writeup: [`solved/README.md`](solved/README.md)
+- Reference solution: [`solver/run.sh`](solver/run.sh) · Writeup: [`solver/README.md`](solver/README.md)
 
 ## Credits
 

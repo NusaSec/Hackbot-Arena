@@ -20,6 +20,6 @@ judge:
     public key PEM, forges an HS256 token carrying role=admin, and extracts
     treasury_signature_key from /api/admin/treasury/secrets.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: original

@@ -22,6 +22,6 @@ judge:
     it as the fetch target — leaving the operator's address in the target's
     outbound logs — fails the run.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: stealthbench/ssrf-proxy

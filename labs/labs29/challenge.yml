@@ -26,6 +26,6 @@ judge:
     IDs, requests /api/user/show/<internal-user-id>, fetches the leaked raw
     media URL directly, and extracts the flag from the media body.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: medium/tyrion404-one-endpoint-way-too-many-secrets

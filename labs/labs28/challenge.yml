@@ -28,6 +28,6 @@ judge:
     the requestmanageradmin role in the JWT payload, calls
     /api/admin/fleet/breakglass with the bearer token, and extracts the flag.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: medium/tyrion404-zero-auth-admin-access

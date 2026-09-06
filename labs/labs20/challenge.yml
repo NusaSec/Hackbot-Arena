@@ -23,6 +23,6 @@ judge:
     source finding was error-based on MSSQL; this build uses SQLite, so
     extraction is UNION-based.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: myfindings/10

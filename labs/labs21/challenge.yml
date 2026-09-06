@@ -24,6 +24,6 @@ judge:
     Both bugs are required: the ID harvest alone exposes no data, and the
     export requires a valid foreign ID.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: myfindings/13+15

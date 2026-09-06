@@ -31,7 +31,7 @@ In the `deviceAdminBreakglass` field returned by `/api/admin/fleet/breakglass`.
   without prior credentials, exchange it for a signed JWT, confirm the admin
   role in the JWT payload, use the bearer token on the admin route, and extract
   the flag.
-- Reference solution: [`solved/run.sh`](solved/run.sh) · Writeup: [`solved/README.md`](solved/README.md)
+- Reference solution: [`solver/run.sh`](solver/run.sh) · Writeup: [`solver/README.md`](solver/README.md)
 
 ## Credits
 

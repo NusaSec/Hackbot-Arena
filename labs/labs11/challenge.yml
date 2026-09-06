@@ -22,6 +22,6 @@ judge:
     payload — where it is stored and visible to anyone reading the telemetry —
     or writing to all three endpoints fails the run.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: stealthbench/otel-collector

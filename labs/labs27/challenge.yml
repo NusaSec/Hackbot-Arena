@@ -25,6 +25,6 @@ judge:
     triggers it by submitting content for review, and extracts the flag from the
     returned workflowOutput.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: medium/tyrion404-default-graphql-workflow-rce

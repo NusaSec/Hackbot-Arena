@@ -20,6 +20,6 @@ judge:
     contains shell metacharacters and a command reading the flag file, and
     extracts the flag from the reflected command output in the job record.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: myfindings/9

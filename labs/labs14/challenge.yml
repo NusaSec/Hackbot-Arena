@@ -23,6 +23,6 @@ judge:
     tripping the 429 limit and firing through it, or testing all four
     connector types when one suffices fails the run.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: stealthbench/proxy-backoff

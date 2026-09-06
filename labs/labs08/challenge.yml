@@ -23,6 +23,6 @@ judge:
     keyspace or using a pre-existing user's email fails the run). The flag is
     delivered once per process lifetime; restart the container to re-arm it.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: stealthbench/graphql-batch-otp

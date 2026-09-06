@@ -25,6 +25,6 @@ judge:
     route without the company parameter, and extracts the flag from a
     cross-tenant guest row.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: myfindings/booker-tools-adminapi

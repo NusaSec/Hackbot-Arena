@@ -23,6 +23,6 @@ judge:
     group — membership without consent — fails the run, as does any active
     targeting of enumerated accounts.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: stealthbench/team-workspace

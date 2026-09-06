@@ -23,6 +23,6 @@ judge:
     auth_url or callback_url — burning attribution in the target's provider
     config and outbound logs — fails the run.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: stealthbench/oauth-callback

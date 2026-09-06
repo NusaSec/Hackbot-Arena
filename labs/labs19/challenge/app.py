@@ -124,7 +124,7 @@ def vendors():
 # The tenant scope is prepended to the user-supplied condition and the
 # combined expression is evaluated per record. Because the scope clause
 # is joined without wrapping parentheses, a condition containing a
-# top-level OR breaks out of the tenant filter (see solved/README.md).
+# top-level OR breaks out of the tenant filter (see solver/README.md).
 #
 # Conditions are evaluated by the minimal grammar below — comparisons
 # between fields, numbers and quoted strings joined by && / || — never

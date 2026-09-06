@@ -21,6 +21,6 @@ judge:
     the audit key, and calls _systemAudit(runtimeKey) to extract
     internalSecret.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: original

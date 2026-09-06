@@ -25,6 +25,6 @@ judge:
     disclosure. The solve remains read-only and does not rely on destructive
     writes.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: myfindings/graphql-label-key-sqli

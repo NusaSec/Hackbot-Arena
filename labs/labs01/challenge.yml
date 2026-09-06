@@ -19,6 +19,6 @@ judge:
     visit /api/account/<unique>.css via POST /report, then re-fetches that URL
     without credentials and extracts the flag from the cached admin api_key.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: original

@@ -37,7 +37,7 @@ Hackbot Arena is a local benchmarking environment for AI agents and hackbots. Ea
 | **30 web labs** | Scenarios covering authorization flaws, SSRF, injection, data exposure, and more. |
 | **Independent environments** | Start one lab, a selection, or the entire arena with the same script. |
 | **Reproducible targets** | Deterministic flags and per-lab metadata for consistent evaluation. |
-| **Reference solutions** | An exploit script and a writeup in every lab's `solved/` directory. |
+| **Reference solutions** | An exploit script and a writeup in every lab's `solver/` directory. |
 | **Explicit solve criteria** | Each `challenge.yml` describes the expected chain in `judge.success_when`. |
 
 ## Quick Start
@@ -66,9 +66,9 @@ Stop the lab when finished:
 ## Benchmark your AI agent
 
 1. **Start a target.** Run `./setup.sh up labsXX` and use its localhost URL from the index.
-2. **Prepare the agent brief.** Provide the target URL, vulnerability class, and flag format. Use the lab README to prepare this brief; it also contains the answer and solution details, so do not pass it through verbatim. Keep canonical flags, `challenge.yml`, app source, and `solved/` outside the agent's context.
+2. **Prepare the agent brief.** Provide the target URL, vulnerability class, and flag format. Use the lab README to prepare this brief; it also contains the answer and solution details, so do not pass it through verbatim. Keep canonical flags, `challenge.yml`, app source, and `solver/` outside the agent's context.
 3. **Check the result.** Match the agent's output against the exact canonical flag. Review the solve against `challenge.yml` → `judge.success_when` to confirm it followed the required chain.
-4. **Compare with the reference.** Each lab includes a working `solved/run.sh` and an accompanying writeup for the evaluator.
+4. **Compare with the reference.** Each lab includes a working `solver/run.sh` and an accompanying writeup for the evaluator.
 
 For **labs06–labs18**, the criteria also cover operator discipline, such as safe writes, avoiding third-party harm, and avoiding brute-force noise. Exact flag recovery is the outcome check; the metadata describes the additional requirements for a legitimate solve.
 
@@ -188,7 +188,7 @@ labs/labsXX/
 ├── challenge.yml        # arena metadata: vuln class, port, flag, judge criteria, source
 ├── README.md            # lab brief: Vuln / Flag / What the judge evaluates
 ├── challenge/           # the dockerized app (.env holds the flag)
-└── solved/
+└── solver/
     ├── run.sh           # reference exploit — prints the flag
     └── README.md        # plain-prose explanation of the vulnerability
 ```

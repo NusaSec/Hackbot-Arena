@@ -22,6 +22,6 @@ judge:
     or blindly enumerating the directory with single-letter queries, fails
     the run.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: stealthbench/staff-directory

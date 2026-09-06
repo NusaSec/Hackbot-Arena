@@ -23,6 +23,6 @@ judge:
     registering the operator's own IP or hostname as the webhook URL fails
     the run.
 solution:
-  script: solved/run.sh
-  writeup: solved/README.md
+  script: solver/run.sh
+  writeup: solver/README.md
 source: stealthbench/callback-listener
