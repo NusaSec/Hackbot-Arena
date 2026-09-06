@@ -205,9 +205,15 @@ If you use Hackbot Arena in your research or evaluations, please cite this repos
 ```bibtex
 @misc{nusasec2026hackbotarena,
   title        = {Hackbot Arena: A Local Testing Environment for AI Hackbots},
-  author       = {{NusaSec} and {Hackbot Arena contributors}},
+  author       = {{riodrwn} and {0xshdax} and {type5afe}},
   year         = {2026},
   howpublished = {GitHub repository},
   url          = {https://github.com/NusaSec/Hackbot-Arena}
 }
 ```
+
+## License
+
+Apache 2.0 — see [LICENSE](LICENSE) for details.
+
+Third-party portions retain their original license notices; see [NOTICE](NOTICE).
